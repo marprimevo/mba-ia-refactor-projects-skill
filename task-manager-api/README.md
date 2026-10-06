@@ -1,13 +1,16 @@
 # task-manager-api
 
-API de Task Manager em Python/Flask usada como entrada do desafio `refactor-arch`. Diferente dos outros projetos, este já possui alguma separação de camadas (`models/`, `routes/`, `services/`, `utils/`), mas ainda contém problemas arquiteturais e de qualidade.
+API de Task Manager em Python/Flask. A skill `refactor-arch` manteve `models/`, `routes/` e `services/`, acrescentou `controllers/`, `config/` e `middlewares/`, e tirou a regra de negócio das rotas.
 
 ## Como rodar
 
-```bash
-pip install -r requirements.txt
+Na raiz do repositório:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+cd task-manager-api
 python seed.py
 python app.py
 ```
 
-A aplicação sobe em `http://localhost:5000`. O `seed.py` popula o banco SQLite (`tasks.db`) com usuários, categorias e tasks de exemplo — **rode-o antes do primeiro boot**, caso contrário os endpoints vão retornar listas vazias.
+A aplicação sobe em `http://localhost:5000`. Login de exemplo: `joao@email.com` / `1234`. Variáveis opcionais em `.env.example`.
