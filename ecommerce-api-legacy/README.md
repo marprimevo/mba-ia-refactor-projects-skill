@@ -1,14 +1,13 @@
 # ecommerce-api-legacy
 
-LMS API (com fluxo de checkout) em Node.js/Express usada como entrada do desafio `refactor-arch`.
+LMS API com checkout, em Node.js/Express, refatorada para MVC pela skill `refactor-arch`.
 
 ## Como rodar
 
-```bash
+```powershell
+cd ecommerce-api-legacy
 npm install
 npm start
 ```
 
-A aplicação sobe em `http://localhost:3000`. O banco SQLite é em memória e já carrega seeds automaticamente no boot.
-
-Exemplos de requisições estão em `api.http`.
+A aplicação sobe em `http://localhost:3000`. O SQLite é em memória e o seed roda antes do `listen`. Exemplos em `api.http`. Variáveis opcionais em `.env.example`.
