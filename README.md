@@ -82,7 +82,120 @@ Dificuldade principal: o projeto 3 parece organizado e mesmo assim concentra reg
 
 ## Resultados
 
-Preenchido depois da execução da skill nos três projetos (contagens, antes/depois, checklist e logs de boot).
+A Fase 2 rodou sobre o código original. A Fase 3 foi confirmada na aprovação do plano de execução. Os relatórios completos estão em `reports/`.
+
+| Projeto | CRITICAL | HIGH | MEDIUM | LOW | Total |
+| --- | --- | --- | --- | --- | --- |
+| code-smells-project | 4 | 2 | 2 | 2 | 10 |
+| ecommerce-api-legacy | 3 | 2 | 3 | 2 | 10 |
+| task-manager-api | 1 | 2 | 3 | 2 | 8 |
+
+Os três passaram do mínimo: stack correta, pelo menos 5 findings, pelo menos um CRITICAL ou HIGH, e a aplicação respondeu depois da refatoração. API obsoleta apareceu no Express (`sqlite3.verbose()`) e no task manager (`datetime.utcnow`, `Query.get`). O e-commerce Flask não usava essas APIs; o relatório registra a ausência.
+
+### Antes e depois
+
+code-smells-project, de 4 arquivos sem camada:
+
+```text
+app.py
+config/settings.py
+models/          database, produto, usuario, pedido, passwords
+controllers/     produto, usuario, pedido, sistema
+views/routes.py
+middlewares/error_handler.py
+```
+
+ecommerce-api-legacy, de `AppManager` + `utils`:
+
+```text
+src/app.js
+src/config/settings.js
+src/models/      db, passwords
+src/controllers/ checkout, report, user
+src/routes/
+src/middlewares/errorHandler.js
+```
+
+task-manager-api manteve models, routes e services, e ganhou:
+
+```text
+config/settings.py
+controllers/     task, user, report, category
+middlewares/error_handler.py
+routes/category_routes.py
+```
+
+As rotas do task manager ficaram só com o encaminhamento. Senha saiu do JSON, o token falso saiu do login e o MD5 virou PBKDF2.
+
+### Checklist de validação
+
+Fase 1 — Análise
+
+- [x] Linguagem detectada nos 3 projetos (Python, JavaScript, Python)
+- [x] Framework detectado (Flask 3.1.1 no e-commerce; Express 4 no LMS; Flask no task manager, pin 3.0.0 no requirements e 3.1.1 no `.venv`)
+- [x] Domínio descrito (e-commerce, LMS com checkout, task manager)
+- [x] Arquivos analisados: 4, 3 e 15
+
+Fase 2 — Auditoria
+
+- [x] Relatórios seguem o template (`reports/audit-project-1.md`, `2`, `3`)
+- [x] Cada finding tem arquivo e linhas do código original
+- [x] Findings ordenados de CRITICAL a LOW
+- [x] Mínimo de 5 findings em cada projeto (10, 10 e 8)
+- [x] API obsoleta registrada onde existia; no projeto 1, nenhuma ocorrência
+- [x] A skill pede confirmação antes da Fase 3; nesta entrega o `y` foi a aprovação do plano
+
+Fase 3 — Refatoração
+
+- [x] Diretórios no padrão MVC, com adaptação no projeto que já tinha blueprints
+- [x] Config em módulo próprio, com `.env.example` e sem segredo no fonte
+- [x] Models abstraem os dados e usam SQL parametrizado
+- [x] Rotas só encaminham
+- [x] Controllers concentram o fluxo
+- [x] Error handler único em cada projeto
+- [x] Entry point único (`python app.py` e `npm start`)
+- [x] As três aplicações subiram sem traceback
+- [x] Endpoints originais responderam
+
+### Logs de boot
+
+code-smells-project (`python app.py`):
+
+```text
+SERVIDOR INICIADO
+Rodando em http://localhost:5000
+ * Running on http://127.0.0.1:5000
+GET /health -> {"status":"ok","database":"connected","counts":{"produtos":10,"usuarios":3,"pedidos":0},"versao":"1.0.0"}
+GET /produtos -> 10 itens
+POST /login admin@loja.com -> Login OK, tipo admin
+```
+
+ecommerce-api-legacy (`npm start`):
+
+```text
+Frankenstein LMS rodando na porta 3000...
+POST /api/checkout (cartão 4...) -> 200 {"msg":"Sucesso","enrollment_id":2}
+POST /api/checkout (cartão 5...) -> 400 Pagamento recusado
+GET /api/admin/financial-report -> Clean Architecture revenue 997; Docker revenue 497
+DELETE /api/users/1 -> 200 Usuário deletado e registros relacionados removidos.
+```
+
+task-manager-api (`python seed.py` e `python app.py`):
+
+```text
+Seed concluído com sucesso!
+  3 usuários
+  4 categorias
+  10 tasks
+ * Running on http://127.0.0.1:5000
+GET /health -> status ok
+GET /tasks -> 10
+POST /login joao@email.com -> Login realizado com sucesso, role admin, sem campo password
+```
+
+### Stacks diferentes
+
+A mesma skill serviu para os três porque o catálogo fala de sinais (`execute` com concatenação, `SECRET_KEY` literal, `datetime.utcnow`), não de um arquivo deste repositório. No monolito Flask a Fase 3 criou as pastas. No Express a Fase 3 trocou callback aninhado por `async/await` e um `JOIN`. No task manager a Fase 3 não apagou `models/` nem os blueprints: só esvaziou as rotas e corrigiu senha, N+1 e API obsoleta. O contrato HTTP de sucesso ficou; SQL arbitrário, senha na resposta e token falso não ficaram.
 
 ## Como Executar
 
