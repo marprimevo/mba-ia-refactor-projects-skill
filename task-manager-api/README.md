@@ -13,4 +13,4 @@ python seed.py
 python app.py
 ```
 
-A aplicação sobe em `http://localhost:5000`. Login de exemplo: `joao@email.com` / `1234`. Variáveis opcionais em `.env.example`.
+A aplicação sobe em `http://localhost:5000`. Rotas em \routes. Login de exemplo: `joao@email.com` / `1234`. Variáveis opcionais em `.env.example`.

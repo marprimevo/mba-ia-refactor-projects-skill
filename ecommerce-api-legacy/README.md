@@ -10,4 +10,4 @@ npm install
 npm start
 ```
 
-A aplicação sobe em `http://localhost:3000`. O SQLite é em memória e o seed roda antes do `listen`. Exemplos em `api.http`. Variáveis opcionais em `.env.example`.
+A aplicação sobe em `http://localhost:3000`, e os caminhos reais estão em api.http. O SQLite é em memória e o seed roda antes do `listen`. Exemplos em `api.http`. Variáveis opcionais em `.env.example`.
